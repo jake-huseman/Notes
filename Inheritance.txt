@@ -1,0 +1,97 @@
+Inheritance
+
+-Dealing with large data sets-
+
+5 Complex Terms
+
+---------------------------------------------------------------------------------------
+1979 iowa state university
+Data structure is a bag of information items together with operations on them.
+(Array with some methods, hash table, etc)
+
+Public class ISUHRS79 {
+	//first iteration: assign 9-digit integers to all students.
+	//engineering decision 1:
+	//9-digit student ids
+	Public int [] studentID;
+Private int size = 0;
+
+	//Get student id; set student id;
+	//randomization nice-to-have utility method
+
+	Public boolean contains(int id);
+	Public int size() {
+		Return studentIDSize;
+	}
+	Public boolean add(int id);
+
+
+}
+
+
+Engineering decision 1: use an array because it is robust in its simplicity
+Engineering decision 2: should the ids be stored in sorted or unsorted order?
+-----------------------------------------------
+Unsorted backing array: 
+-----------------------------------------------
+Public boolean add(int id) {
+checkCapacity(); //private method that is not implemented that will double the array if we  //are at capacity 
+studentID[size] = id; 
+Size++;
+Return true;
+}
+
+Public boolean contains(int id) {
+	for(int i = 0; i < size; i++) {
+		If(studentID[i] == id) return true;
+	}
+	Return false;
+}
+
+----------------------------------------------------------------------------------
+Use a sorted array: we can use a binary search but aren't here.
+--------------------------------
+Public boolean add(int id) {
+	Int temp = -1;
+	Int temp2 = -1;
+for(int i = 0; id < studentID[i]; i++) {
+	
+}
+Temp = studentID[i];
+studentID[i] = id;
+//roll another loop to shift all elements one index to the right of the insertion
+for( ; i < size; i++) {
+	Temp2 = studentID[i + 1];
+	studentID[i] = temp2;
+}
+//every time i add an element, i have to shift on average ½ of all elements just to add an //element.
+
+If n is the size of the student array
+
+Unsorted:
+add() takes 1-2 steps 0(1)
+	Takes contant # of ops regardless of the size of the array
+contains()
+	Takes on average ½ of the array size operations  because we are finding by checking elements one by one.
+
+Sorted array:
+add() takes logn steps to find the location with binary search plus ½* n steps on average to move the upper half of the sorted array 1 index to the right.
+contains(): takes logn steps or if naive without binary search, takes n/2 steps on average.
+
+
+
+Unless the code line is a loop, it takes 1 instruction to the processor.
+
+If it is a loop, it is most likely n instructions, where n is the size of our data.
+
+Define log:
+It is the number that you raise 2 to, to make some number n:
+
+K times
+2*2*2*2……..*2*2 = n; ⇐> 2^k = n ⇐> k = logn
+
+The slowest growing function for algorithms:
+
+Log 1000 = 10
+Log 1,000,000 = 20
+Log 1,000,000,000 = 30 (1bn ~ 2^30)

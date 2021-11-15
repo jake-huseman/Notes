@@ -1,0 +1,172 @@
+Exam 2 - Nov 2nd
+// go over and create code from lectures
+
+Performance of list methods by implementation:
+Big-O:                  Array                                                   LinkedList
+get(int index)          O(1)                                                    O(n)
+contains(E item)        O(n) - not sorted, have to go through each element      O(n)
+size()                  O(1)                                                    O(1)
+add(int index)          O(n) * need to copy right side elements 1 index to the  O(n) ** we do not shift elements BUT we have to
+                                right to make a gap for the new addition.               iterate to the index where the add
+                                We double array size if out of space. Linear            should be.
+                                for a single addition BUT amortizes to O(1)
+                                for n adds. Because for n adds, we do 2n total
+                                copying the arrays+adding.
+remove(E item)          O(n) *** can jump to index but have to close gap of the O(n)
+                               removed element by shifting right-side elements  O(n)
+                               1 index to the left.
+iterator.add()          O(n) *                                                  O(1)
+iterator.remove()       O(n) ***                                                O(1)
+iterator.set()          O(1) - just touching one index, replacing one item      O(1)
+add k items:            O(n * k) - have to go to an array, do something then    O(n + k)
+                                   go to another index, do something. k times.
+==inserting
+k items at                        batch-add() is cheap in linked list
+k increasing
+indices with
+or without gaps.
+
+
+
+
+-----
+Stack
+-----
+single location of intrest: the top of the stack; we always add and remove from
+that place; peeking returns the element without popping the stack
+
+public interface PureStack<E>
+{
+  void push(E item);
+  E pop();             // returns top item; throws NoSuchElementException; Stack underflow
+  E peek();           // returns top item without removing
+  boolean isEmpty();
+  int size();
+}
+Stack is implemented in the module files.
+It is called PureStack and is much smaller than a java implementation Because
+of all the utility methods.
+
+Java recommends using Deque ("Deck")
+instead of the legacy java stack implementation.
+
+Dequeue vs Deque
+
+Java call stack, like all language call stacks, keeps suspended information
+about methods that are currently executing and are suspended waiting for a child
+method to finsih.
+70 is about as deep as modern non-recursive software implementations go; the Java
+stack is worth 1000-2000 method calls and is fixed to help with debugging,
+because if you ever your program runs out of stack space, 98% probability its a
+faulty recursion; 2% it is a ok recursion that requires more invocations,
+e.g. 15,000
+
+Killer app for stacks is any compiler.
+we will investigate a tiny portion of that functionality: parenthesis matching,
+postfix notation evaluating infix notation.
+--------------------------------------------------------------------------------
+
+Best way to prepare for the exam portion of the class
+(and the rest of the class)
+is to write code from scratch from every lecture.
+Many repetitions at small weight per rep.
+One to two line methods.
+--------------------------------------------------------------------------------
+
+
+push() ==> add()
+peek() ==> get(size()-1)
+pop() ==> remove(size()-1)
+isEmpty() ==> isEmpty()
+size() ==> size()
+--------------------------------------------------------------------------------
+
+{[(){[]}]()} is well formed
+([)] not well formed
+incorrecrlt matching closing parenthesis
+too many opening parentheses
+too many closing parentheses
+
+We will get a String containing parenthesis characters; we will loop through it
+left-to-right and we will use a stack to match opening and closing braces etc
+
+Formally:
+g: a string of parentheses is well formed if:
+
+g is empty OR
+g has the form:
+  (a)b
+  [a]b
+  {a}b
+        where a&b are well-formed strings
+
+        EMPTY is a well-formed string
+        (EMPTY)EMPTY is well-formed as well. []() is well formed
+        etc.
+
+Read a character
+  1. if opening parentheses, push().
+  2. if closing parentheses, pop().
+    and compare; if NoSuchElementException OR parenthesis mismatch, return false;
+
+If myStack.isEmpty()
+  return true;
+  // else we have to many opening parenthesis
+
+
+algo is in lecture 24.txt
+
+Home exercise: argument the algorithm to recognize priority:
+( vs [ vs {
+so for example, you cannot place [] inside ()
+Then, ([]) is malformed
+
+85% chance this will end up on exam vvvv
+--------------------------------------------------------------------------------
+// to do vvvv
+PureStack<Character> s = new ArrayBasedStack<Character>();
+
+for(int i = 0; i < text.length(); ++i)
+{
+  char c = text.charAt(i);
+  if(c == '(' || c == '[' || c == "{")
+  {
+    s.push(c);
+  }
+  else if(c == ')' || c == ']' || c == '}')
+  {
+    // right delimiter should match top of stack
+    try
+    {
+      char left = s.pop();
+      if(left == '(' && c != ')' ||
+          left == '[' && c != ']' ||
+          left == '{' && c != '}')
+      {
+        return false;
+      }
+    }
+  }
+}
+--------------------------------------------------------------------------------
+infix notation
+----------------
+
+
+
+---------------
+postfix notation 23.pptx
+---------------
+also called RPN in which operands come before operators
+
+algorithm for evaluating:
+use a stack; parse string left-to-right:
+1. if token is an operand/number, push()
+2. if token is an operator, pop() into right Op
+  a. pop() into rightOp
+  b. pop() into leftOp
+  c. evaluate leftOp op rightOp
+  d. push(result)
+
+
+at the end of the loop, the stack should contain a single result element.

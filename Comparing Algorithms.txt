@@ -1,0 +1,76 @@
+ALWAYS BIG O QUESTION ON EXAM
+Speed
+Amount of memory (E.G. in recursive methods)
+Amount of network bandwidth
+Ease of implementation
+Adaptability for reuse
+
+Measure speed with a timer?
+	--could be hardware and software environment-dependent, so we cannot compare algorithms on two different platforms.
+	--assures algorithm is cheap to implement 
+	--does not tell us how the algorithm scales
+
+-------
+Big-O
+-------
+Abstract(verb) the hardware and software environment execution in steps as a function of input size, e.g.
+	--to process n elements, I need n computer instructions
+	--always reasoning the worst-case scenario:
+		The scenario where we need the most computer instructions to finish the task.
+
+Example:
+Search algorithm:
+Find a value v in an array a (array.length == n)
+
+Worst case scenario: element is not there
+Second worst case scenario: element is at the last index
+
+Counting operations for an algorithm’s execution:
+If its not a loop, the line is almost certainly a single operation.
+If it is a loop, a starting expectation is n iterations == n operations per line; we can adjust the expectation depending on loop variables.
+
+i = 0;   ---- 1 op
+While i < n   ---- n ops(o to n-1 index) + 1 (termination step is + 1) 
+	If A[i] = v ----  n*1 op final check to exit loop 
+		Return true ---- 1 op (redirect execution to another location in memory)
+	I++  ---- n*1 op
+Return false ----1 op (alternate to return true)
+
+Worst case scenario time measured in computer ops: (skipping true)
+T(n) = 1 + (n+1) + n + n + 1 = 3n + 3
+
+Big-O is the label we attach to the concept:
+Worst case time complexity is the absolute worst for efficiency.
+
+The Big-O is ONLY interested in the most significant term in a polynomial, and does not care about constants!
+So T(n) = 3n + 3 is O(n)
+
+Translated: The polynomial 3n+3 has a growth rate of in terms of n that is overshadowed by the growth rate of n with an arbitrary constant.
+
+Definition:
+T(n) <= c*f(n) where T(n) is the exact count of computer steps, c is a constant f(N) is logn, n, n^2, n^3…
+
+The above can be understood as T(n) is in the growth envelope of f(n)
+
+T(n) = 3n+3 is O(n) because I can pick my constant c to be 4, then 4n grows than 3n+3 for n>3.
+
+T(n) = 42,000,000n + 15 quadrillion is O(n): it does not grow faster than n with some large constant in front of it, e.g. 16qdrn * n
+
+All polynomials with some constant in front of the largest term, e.g. 15,000 n are in some small ribbon on the coordinate plane and a more significant term such as ½ * n^2 will be an upper envelope for the original T(n). In the above case, for n > 30,000, ½ * n^2 > 15,000 * n
+
+Rules for Big-o
+1. Reason about the most unfavorable scenario and determine what it is.
+2. If a line of code is not a loop, then it is most likely O(1) == constant time, single op.
+3. If a line of code is a loop, then most likely it is a linear loop BUT you need to check the loop conditions.
+		Example: loop that goes through ½ of the elements on average is O(n)   because  we drop the constant.
+		--Nested loops multiply the number of operations:
+		E.g.
+		for(i = 0; i < n; i++)
+		{
+			for(j = 0; j < n; j++)
+			{
+				//quadratic time O(n) * O(n)
+				//the inner loop on average goes through half the array so it is still               
+                                               //O(n)
+			}
+		}

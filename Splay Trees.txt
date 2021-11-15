@@ -1,0 +1,339 @@
+Add all notes in here and drive to github
+
+put rank in its own method
+loop through input
+rank, pass it a token(param) and compare
+----------------------------------------
+Exam: delete or add a node (got to zig or zig-zig or zig-zag)
+and whats the third grandchild on the left or such?
+
+
+
+
+BST and Splay Trees
+-------------------
+
+
+Remove
+------
+3 cases: node-to-remove has 0 children, 1 child, 2 children
+
+Cases:
+1. 0 children
+2. 1 child
+--the above do not require thinking--
+3. 2 children
+  -- never delete a node with 2 children; instead, delete its successor--->         (Node with next smallest larger payload)
+     The resulting tree will be correct because if we order the payloads in a
+     sequence, then
+
+     1, 2, 3, 4, 8, 25, 139: 25 is the successor to 8;
+     if we remove 8 the resulting structure is still intact.
+
+     We copy over the successor into the original Node
+          THEN
+     We RETARGET the deletion to the successor node.
+
+     We will NEVER encounter a node with 2 children there.
+
+     COMS 230-style proof that the successor never has two children.
+
+     Using the technique: "Proof by contradiction"
+     Assume the opposite of what you want to prove and show that it is illogical    (That it contradicts some known truth)
+
+  In our case, we assume the opposite of what we want to prove:
+  We assume that the successor has two children.
+
+  Then, its left child is SMALLER than itself and should be the successor
+  proper, Then the successor is not a successor. That is a contradiction.
+
+  Therefore, a successor cannot have two children.
+
+  A successor may have a right subtree or be a leaf.
+
+  The deletion of a successor is easy.
+
+  Our delete consists of:
+
+  1. copy successor payload into original node,
+      effectively deleting the original payload.
+  2. Designate successor node to be removed as we currently have two copies of
+      the successor payload
+  3. Remove successor node, which is easy because it has at most one child.
+
+
+
+Finding successor for a node with 2 children:
+  Step to the right once; if no left steps possible, return current node.
+  If one or more left steps possible, preform all and return last node.
+
+      6
+     / \
+    4   7  <== successor (last node on the right of right of root that goes left)
+         \
+          8
+
+
+
+@Override
+public boolean remove(Object obj)
+{
+  E key = (E) obj;
+  Node n = findEntry(key);
+  if(n == null)
+  {
+
+  }
+}
+
+
+
+
+unlink
+------
+
+protected void unlinkNode(Node n)
+{
+  // first we check if we have two children. If so, we copy over the payload into
+  // the original and designate the successor for deletion. Once we have
+  // re-targeted the deletion, we can handle all cases the same
+  if(n.left != null && n.right !=null)
+  {
+    Node s = successor(n);
+    n.data = s.data;
+    n = s; // causes s to be deleted in code below
+  }
+    // 2. find replacement node (may be null if node to be deleted it leaf)
+    Node replacement = null;
+    if(n.left != null)
+    {
+    replacement = n.left; // have left child ==> replace with it!
+    }
+    else if(n.right != null)
+    {
+      replacement = n.right; // have right child ==> replace with it.
+    } // maybe this removed to make correct? check pdf
+    // you cannot have both left and right
+
+    // link replacement into tree in place of node n
+    (if n.parent == null)
+    {
+      root = replacement;
+    }
+    else
+    {
+      n.parent.left = replacement;
+    }
+  }
+  if(replacement != null) // maintain reference to parent to finish attaching the tree
+  {
+    replacement.parents = n.parent;
+  }
+  --size;
+}
+
+
+
+
+
+successor
+---------
+What is the successor of a node that has no right child?
+Answer: the first ancestor to the right.
+  Because: the current node is in the left subtree of that ancestor.
+  ancestors to the left are actually smaller than the current node.
+
+  You climb until your parent is a left child to the grandparent.
+
+protected Node successor(Node n)
+{
+  if(n == null)
+  {
+    return null;
+  }
+  else if(n.right != null)
+  {
+    Node current = n.right;
+    While(current.left != null)
+    {
+      current = current.left;
+    }
+    return current;
+  }
+  else
+  {
+  // we need to go up the tree to the closet ancestor that is a left child;
+  // its parent must be the successor.
+    Node current = n.parent;
+    Node child = n;
+              /* Root */     /*successor condition*/
+    while(current != null && current.right == child)
+    {
+      child = current;
+      current = current.parent;
+    }
+    return current;
+  }
+}
+
+--------------------------------------------------------------------------------
+Splay Trees ==> 30.pptx
+-----------
+Self-adjusting binary search trees
+3 steps:
+zig, zig-zig, or zig-zag
+
+We are studying splay trees because we want a guarantee that our search will
+run in O(logn)!
+
+BST's worst case scenario is a tree that does no branch:
+
+5
+ \        <== degenerate trees are created by adding payloads in sorted or
+  6           reverse sorted order. They offer no advantages in searching
+   \          compared to linear structures.
+    7
+     \
+      8
+Splay trees and balanced trees prohibit the above situation from occurring.
+
+Balanced trees have height O(logn)
+
+Successor() and findEntry() run in O(h)
+h == n for non branching Trees
+h = logn for
+---------------------------------------------
+11-10-21
+Splay trees continued
+---------------------------------------------
+A splay operation is preformed after every search and delete (Normal operations)
+A splay operation takes a node anywhere in the tree and promotes it to root via
+  a series of rotations called zigs/zig-zags/zig-zigs.
+
+We change the root of the tree after every normal operation
+
+Think of the tree to be rearranged (because we are doctoring the structure
+continually to ensure it does not degenerate)
+
+We expand a large number of operations to ensure the tree does not stop
+branching.
+
+
+Practice zig-zigs and zig-zags:
+--------------------------------------------------------------------------------
+Zig:
+    y                         x
+   /    ---> pull up x--->     \
+  x     <--- pull up y---       y
+   \                           /
+    B                         B
+
+Attach inner tree of the promoted Node to:
+1. Preserve the binary quality (max 2 children)
+2. Preserve the search property
+--------------------------------------------------------------------------------
+
+Zig-zig is a sequence of two zigs going in the reverse direction of the Splay
+
+Splay goes from bottom to top, but within each
+
+zig-zig backbone nodes:
+(zig-zig is used )
+
+
+    z                       y                         x
+   /                       / \                         \
+  y   --> pull up y-->    x   z   -->pull up x->        y
+ /                                                       \
+x                                                         z
+  (also we need to adjust any inner subtree
+    to attach the obvious choice: the demoted Node)
+--------------------------------------------------------------------------------
+Zig-zag is used when three nodes are staggered.
+
+    z               z
+   /                 \
+  y         or        y
+   \                 /
+    x               x
+
+One-step zig-zag:
+a. Take the up-to-two subtrees of x and attach them to the ancestor on their side
+(regardless of wether the ancestor is parent or grandparents)
+
+b. promote the x to be the parent of y and z.
+
+Example 1:                  Example 2:
+
+  z                                 z
+    y                             y
+  x                                 x
+ C D                              C   D
+
+ Steps:                           Steps:
+ attach C to Z                    Attach C to Y
+ attach D to Y                    Attach D to Z
+ make x the parent of z and y     Make x the parent of y and z:
+
+
+    x                                 x
+  z   y                             y   z
+   C D                               C D
+
+
+Consists of
+zero or more zig-zig operations
+zero or more zig-zag operations
+zero or more zig operations
+
+
+A splay operation promotes a single node to be the root of the entire tree.
+
+The path upwards determines which steps are to be taken and how many of them.
+If there are three nodes in a line, we use zig-zig. If there are three
+staggered nodes, we use zig-zag. If at the end we have only two nodes remaining,
+(which means the splayed node is now a child of the root), we use a final
+single-zig.
+
+1.)
+c             b               a
+ b    ->    c   a  ->        b
+   a                        c
+2.)
+e             a
+ d   ->     d   e
+  a
+3.)
+  g
+ f  ->       a
+  a         f g
+4.)
+    i                 a
+   h  ->   h      ->    h
+  a      a   i            i
+--------------------------------------------
+
+
+
+zig operation: has a few pointer readjustments
+
+zig-zig and zig-sags are just sequences of zigs
+
+So the Big-O of a full splay operation is:
+
+We can compute T(n) = d*k, where d is depth of the node                         (distance in edges to the root)
+k is some constant between 2 and 5                                              (we don't want to count pointer reassignments)
+
+If T(n) = d*k where k is const,
+then
+O(n) is O(d)
+
+And because the splay operation ensures branching, then the splay operation
+itself is in O(logn), where T(n) is g*logn, where g is the number d*k
+
+T(n) = k*logn
+
+Example: we have 200 pointer adjustments as we restructured the Therefore
+
+So we could have 300 total instructions to search and splay a tree of 2 billion
+nodes.

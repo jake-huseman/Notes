@@ -1,0 +1,164 @@
+Up to queues on the exam
+quick sort
+maybe some other sorting algos
+how to implement queue methods, in zybooks
+can you pop the whole queue and then add them (again?)
+
+create a method and the method should throw an exception. peek does not throw
+and element does throw an exception. They do the exact same thing though.
+
+E element() - throws
+E remove() - throws NoSuchElementException
+E poll() - retrieves and revmoves the head of this queue -> does not throw      null if empty
+
+queue<E> inherits all methods of collection...
+
+1. Use a singly linked list with a tail pointer. Add to tail; remove from head.
+(with or without dummy nodes)
+
+may be on exam vv implement it!
+1a. Use a circular linked list with only tail present! tail->next is head!
+You can also have tail->previous. There is no head pointer!
+
+2. We can use an existing linked LinkedList
+  LinkedList implement Queue methods.
+
+  Java recommends using a deque for stack and it can also be a Queue<E> with
+  removeFirst() and addLast();
+  Deque is a dobule-sided queue.
+  Can add and remove from both ends
+  (D-E-C-K) vs Dequeue (di-kju)
+
+3. We can implement the queue. (circular queue) example on lecutrue 27
+  with an array.
+  need index first, which is where we remove from; and last, which is the index
+  we add to.
+
+  The general flow is:
+  arr[last] = newElement
+  last = last + 1;
+
+  removing:
+  newElement = arr[first];
+  first++;
+
+  At the beginning, first == last == 0;
+
+  l = last
+  f = first
+
+
+  l
+  f
+  --------
+  ........
+  --------
+
+  as some point we will reach the following configuration:
+        fl              l = (l+1) mod arr.length --> will give us 0 if l is n-1.
+  --------
+  ......8.
+  --------
+  result:
+  l      f
+  --------
+  ......89
+  --------
+
+
+     f   l
+  --------
+  ...3..4.
+  --------
+  first is at next-to-last index and last is at n-1
+
+  Solution #1: loop around using modulus.
+  Insead of
+  last++, we can substitute:
+
+  last = (last+1) % arr.length
+
+  Assuming arr.length is 10 and last is 9:
+
+  last = (9+1) % 10 = 10 % 10 = 0;
+
+  We have to increment "first" with modulus as well:
+  first = (first+1) % array.length
+
+  after we introduced wrap-around indices, the array becomes conceptually
+  circular even though it is linear in memory.
+
+  We should be keeping size, but it would be nice if last was always on an
+  empty index. Then if first == last, we know the queue is empty.
+
+  By contrast, in the powerpoint slides
+  (25queues_trees.pptx) the circular array allowed first==last==any_index when
+  the queue is either empty or full.
+
+  We can make it so first==last means the queue is empty:
+
+  In add(), we would not premit the add if:
+  if
+  {
+    (last+1) % array.length == first;
+  }
+    throw new IllegalStateException;
+
+    The above code ensures last == first only by removing items, so the queue
+    is empty when that condiditon is satisfied
+    AND
+    last always points to an empty index
+
+    When queue is full:
+       lf
+    ---------
+    468.73251
+    ---------
+    (still one empty element underneath last)
+
+    when queue is empty:
+    l
+    f
+    --------
+    ........
+    --------
+
+      last==first can define isEmpty() but you are already keeping track
+      of the size variable.
+
+    All the above code assumes we are not increasing the array capacity.
+    But we could, with implenting the old checkCapacity() which doubles the
+    array with array.copy().
+       lf
+    ------
+    352.84
+    ------
+    To double the array, we could remove() all items and add them to the new
+    resized queue.
+
+    amortized time in the case of doubling arrays means that to insert n
+    elements we only do n extra operations, even if we batch some of them. But
+    on average, our work per insertion remains O(1) and the algo is efficant even
+    though it may have occasional latency.
+
+    Array.copy(start_index, end_index) 2 times:
+    The right portion should be copied on the right side of the expanded array.
+    and the left portion should be copied to the start index (0) of the new array:
+
+    lf
+ ------
+ 352.84
+ ------
+
+    l     f
+ -----------
+ 352......84
+ -----------
+
+
+--------------------------------------------------------------------------------
+Trees
+Connected graph without cycle, looks like a submerged seaweed with branches
+extending in multiple directions.
+
+We make a tree by taking a node object allowing non-linear outgoing refrences

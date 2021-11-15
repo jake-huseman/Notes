@@ -1,0 +1,187 @@
+Exam next tuesday
+No lecture next monday
+HW3 tommrrow
+
+Alternative title:
+"How to make a computer evaluate basic arithmetic expressions:"
+
+7 2 3 + - in postfix
+
+Prelim discussion 1. Operator associativity:
+If we have two of the same operator, which one is executed first?
+
+2+3+4: addition doesnt care
+2-3-4: subtraction is left-associative:
+  the left operator should be executed first.
+  (2-3)-4
+
+division, modulo are left-associative
+mutiplication is agnostic
+
+overall, we can bundle left-associative operators together with addition and
+mutiplication for method coding purposes
+
+^ exponentiaton is the only right-associative operator:
+  2^3^4 == 2^(3^4) >> (2^3)^4
+
+
+PEMMDAS for mutiplication modulus
+Prelim discussion 2. Operator precedence:
+() > ^ > * == / == % > + == -
+--------------------------------------------------------------------------------
+1. rank -- just a level for a running tally of points that checks if the
+expression alternates numbers and operators correcrly, thereby catching many
+malformed expressions
+
+Rank here is not a mathmatical concept, so there is nothing speical about.
+
+Parsing an expression left-to-right,
+Rank starts at 0, should never leave the range [0,1]
+
+Each operand/number is +1
+Each operator is -1
+parentheses add 0
+
+Running sum of each tokens contribution
+
+expression should on a 1 (lasy symbol should be a number)
+The above is for checking the infix expression for correctness
+
+Ex: 2+3+4+5/7-2
+Rank: 1 0 1 0 1 0 1 0 1
+
+By contrast,
+
+Ex.2: 2 + + 4
+  1 0 -1 <--- singal malformed expression:
+                too many operators.
+                the expression should end in a 1 and should start with a number
+                unless it is a minus sign, but that should be apart of a number
+
+                If we read a token -25 (-25)
+                that is different than
+                - 25, which is two tokens! (-)(25)
+(can be read with myScanner.next() or String.split())
+
+Rank cannot account for correct paraentheses
+Ex. 3: 3 + 8 ) - 2
+Rank: 1 0 1 1 0 1
+-- rank algorithm allowed the above incorrect expression, we have to catch the
+parentheses mistakes at conversion time.
+
+Infix ^^
+--------------------------------------------------------------------------------
+2. Infix-to-postfix algorithm
+Going left to right, we use 1 stack to hold operators and output numbers
+to the postfix expression. There is no processing on payload elements/numbers.
+--------------------------------------------------------------------------------
+If token is a number, append to output string.
+Else:
+  roe is the newly-read operator
+  while(!opStack.isEmpty() && prec(roe) <= prec(opStack.peek()))
+  {
+    o = opStack.pop()
+    append o to postfix
+  }
+    opStack.push(roe)
+
+--------------------------------------------------------------------------------
+At the end of parsing, pop() and append all remaining operators.
+
+
+Ex. 1: abc*+
+
+
+c
+b
+a
+_
+
+*: pop c into rightOperand
+  pop b into leftOperand
+  evaluate b*c
+  push result
+
+b*c
+a
+_
+
++: pop b*c into rightOperand
+  pop a into leftOperand
+  evaluate a+b*c
+  push
+
+a+b*c
+_
+
+--------------------------------------------------------------------------------
+Ex.2: a b * c / d +
+
+
+b
+a
+_
+
+a*b
+_
+
+c
+a*b
+_
+
+  /: a*b/c
+
+a*b/c
+_
+
+  +: a*b/c + d
+
+--------------------------------------------------------------------------------
+
+3. Handling ^:
+Exponentation is right-associative the rightMost ^ should be evaluated
+FIRST. Which means we have to STACK exponentation operators on top of each
+another, so we can pop the LAST ONE first(so it can be evaluated first.)
+
+To do this, we have 2 priority scores for ^: 4 when coming from input, and --
+
+
+--------------------------------------------------------------------------------
+alt ex 3: Another operator inbetween 3 exponetiation operators:
+  2^3 + 4^5
+
+
+^
++
+_
+2 3 ^ 4 5 ^ +
+--------------------------------------------------------------------------------
+
+4. Handling parentheses:
+  their job is to isolate subexpressions.
+  What we want is operators to not be able to pop left parentheses.
+  Only right parentheses should be able to pop left parentheses, ensuring the
+  integrity of the subexpression.
+
+  a. left parentheses is 5 from input;
+  -1 on stack (cannot be popped)
+  Does not pop antrhing AND cannot be popped by anything!
+
+  b. right parentheses pops all operators until left parentheses popped;
+  discards left and right parentheses.
+
+  In this sense, a right parentheses is just a command to pop the stack until
+  the last left parentheses does not go on stack or output.
+--------------------------------------------------------------------------------
+Ex.4:
+  a b c + *
+
+
+c
+b   b+c
+a   a     a*(b+c)
+_   _     _
+
+If the ) command does not find a left parentheses, a malformed expression should
+be singalled: too many right paraentheses.
+--------------------------------------------------------------------------------

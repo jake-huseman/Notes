@@ -1,0 +1,55 @@
+Expression Trees & Binary Search Trees
+11/3/21
+=======================================
+Expression Tree Construction:
+- The resason this algorithm is important is its use in compilers
+- The idea is to convert a line containing an expression into a tree format
+- The algorithm is almost identical to evaluating postfix
+	- Here we construct nodes and trees instead of evaluating the result
+- We will use a stack and parse left-to-right
+	1) If the token is a number, we make a new node with the number and push
+	2) If the token is an operator
+		a) We create a node with the operator as payload
+		b) pop() most recent node and attach as right subtree
+		c) pop() second most recent node and attach as left subtree
+		d) push() current node back onto the stack
+- Note: this algorithm does not check for malformed expressions
+	- We can check while evaulating the tree
+
+Expression Tree Evaluation:
+- We evaluate the expression in the tree recursively
+	- Termination condition
+		- If the node is a leaf, we can check if it a number
+		- If it is not a number, we can throw an ExpressionFormatException (operator hanging by itself)
+		- Assuming we have a node that is not a leaf, we must check it has both subtrees
+			- Otherwise throw ExpressionFormatException (operator needs both operands)
+	- Compute the lhs (left-hand-side) and rhs (right-hand-side)
+		- lhs = evaluate(current.left());
+		- rhs = evaluate(current.right());
+		- lhs operator rhs (Switch or if-else statements)
+==================================================================================================================
+Binary Search Trees
+
+Why do we care about trees?
+- Need a structure to allow us less-than-linear search-and-insert and search-and-delete at a particular location
+	- Hopefully logn
+
+Set: unordered collection with no duplicates
+- Examples:
+	- {love, friendship, power_of_friendship}	->	set
+	- {1, 2, 3}									->	set
+	- {All students in COMS 228 in F2021}		->	set
+	- {1, 1, 2}									->	not a set
+
+A binary search tree can be the backing store for a set because we define it in the following way:
+- It is a tree where every node has at most two children
+- All the children in the left subtree are smaller than the root
+- All the children in the right subtree are larger than the root
+- BSTs have unique values, and we can search for any value by comparing our search term to current.data
+	- Go left if search term is smaller or right if search term is larger
+
+A BST is optimized for searching:
+- Going down a branching BST, finding an element takes logn
+	- Every time we choose left or right, we discard a fraction of the search space
+	- For this to be true, the tree needs to have branches
+		- Searching a degenerate (non-branching) tree takes O(n) because we never discard any of the search space

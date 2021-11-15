@@ -1,0 +1,198 @@
+Abstract == The code is not there yet
+
+Class Hierarchy 
+
+1.
+
+Locomotion l; 
+//Ok we can have a abstract reference variable
+Grasshopper g; 
+//Ok we can have a abstract reference variable
+
+
+2.
+Pollination p = new Pollination();
+	//Compiler error: cannot instantiate abstract class
+Insect i = new Insect(3, “Green”); 
+	//Compiler error: cannot instantiate abstract class
+Insect i = new Grasshopper (2, “brown);
+	//Compiler error: cannot instantiate abstract class because of antennae()
+
+
+3. Need a cast to assign a parent to a child reference
+
+Katydid k = new katydid(3, “Green”); 
+//Ok
+Grasshopper g = k;
+ //Ok because descendant
+
+Locomotion l = new katydid(3, “Brown”); 
+//Ok
+
+g = l; 
+//locomotion is an ancestor of grasshopper; ancestors cannot fulfill the contracts of descendants. Compile time error: incompatible types.
+
+//how to fix?
+g = (Katydid) l; 
+	//can downcast to something compatible. The compiler is obligated to obey //provided the casting makes sense: it will still check if the type to cast to is compatible //with the original. == is a descendant?
+
+4. 
+No conversion between siblings
+
+Grasshopper g = new Locust(3, “Red”);
+	//Ok because can put concrete child in parent reference
+
+Katydid k = (katydid) g; 
+	//compiles BUT we cheated the compiler because locust is not compatible with //katydid. WILL produce ClassCastException at runtime.
+
+g = new Mantis(4, “Green”);
+	//Compile error: incompatible types (Because siblings)
+
+
+5.
+
+Locomotion l = new Katydid(3, “Brown”); 
+	//Ok
+
+l.attack(); 
+	//compile error: method attack() undefined for type Locomotion
+
+
+6.
+
+Locomotion l = new Locust(2, “Black”) 
+	//Ok
+
+L.move; 
+//OK , will ALWAYS use the NEWEST implementation of a method even if 15 //older implementations exist. THAT is dynamic binding. The news definition HIDES all //of the older definitions of a method. If those are needed, instantiate an ancestor where //THAT implementation is the newest.
+
+l = new Bee(1, “Gold”, “Hill”);
+	
+l.move() 
+	//”fly”
+
+7.
+
+Insect i = new Katydid(2, “Green”);
+	//Ok
+
+i.attack(); 
+	//use the newest implementation among all ancestors: Grasshopper’s “bite’
+
+I = new Mantis(4, “Green”);
+	//Ok
+
+i.attack();
+	//”strike”
+
+8.
+
+Insect k = new Katydid(3, “Green”); 
+	//ok
+
+k.attack();
+	//ok
+
+k.antennae();
+	//Compile error: antennae() not defined for type insect. If we did grasshopper
+	//((Grasshopper) k).antennae(); //prints “long” because it goes to the Newest    
+           //definition of the method.
+
+9.
+
+Grasshopper g = new Katydid(3, “Golden”);
+	//Ok
+
+System.out.println(g.feedOn());
+	//dynamically invokes the newest implementation, prints “variety”, NOT “grass”
+
+
+10.
+
+Pollination p = new Bee(1, “Golden-Black”, “Lake”);
+	//Ok
+p.getSwarm();
+	//Compile Error: getSwarm() undefined for type pollination
+
+
+11.
+
+Mantis m = new Mantis(5, “Green”);
+	//Ok
+
+m.move();
+	//”crawl”
+
+Insect i = m.preyOn();
+	//The restricted insect reference gets a Grasshopper reference containing a                             //Locus Insect cannot invoke anything from Grasshopper or Locust
+
+i.move(); 
+//Compile error: method undefined for type insect.
+
+
+12.
+
+Insect i = new Mantis(4, “yellow”);
+	//Ok
+
+((Mantis) i).move();
+	//”crawl” because we downcast. If we hadn’t cast, it would error out.
+
+((Mantis(i.preyOn().attack();
+	//invoke Mantis preyOn() which returns Locust and attack() is invoked only                                                                      //Grasshopper. Grasshopper dynamically invokes the newest implementation. Which is in grasshopper, “bite”
+
+i = new Bee(1, “golden-black”, “Hill”); //Ok
+
+((Bee) i).makeHoney();
+	//”Orange blossom”
+
+
+13.
+Upcasting does not accomplish much because dynamic binding automatically uses the newest implementation. We are unable to use ancestor versions of methods from a descendant.
+
+Mantis m = new Mantis(4, “Green”);
+	//Ok
+
+((Insect) m).attack();
+	//”bite” 
+	//upcasting from Mantis to Insect.
+	//Upcasting in Java is only useful if you are trying to fool the compiler. 
+	//I just upcast to Insect.attack() => dynamic bind
+	//to the lowermost implementation => behaves like a mantis anyways
+
+((Bee) ((Insect)m)).makeHoney();
+	//Compiler agrees because insect is a ancestor of mantis and bee is a descendant of Insect But this will throw a runtimeexception “Incompatible cast”
+
+
+
+
+Try yourself
+
+Public //visible everywhere
+private//visible inside classes
+Protected //visible everywhere in the package and descendants
+default//visible everywhere in the package
+
+---------------------------
+Top of java hierarchy is a class called Object
+---------------------------
+Object class
+Java has defined a 
+
+Public class Object{
+	//all classes inherit from this class without any declared syntax@
+}
+
+Two of the methods they inherit are:
+	-getClass() //returns the runtime/dynamic incarnation of the class
+	-toString() //prints some gibberish, so can be called without being defined.
+------------------------------------
+Primitives vs Object variables
+
+Primitives: only one location in memory; Java knows how to read it.
+
+Object variables: 2 locations in memory: the reference location, which contains an address of the memory containing the object.
+
+Point class with x, y integer coordinates
+
+RefVarA = RefVarB just copies the address of the object, so now we have 2 handles on the same memory location

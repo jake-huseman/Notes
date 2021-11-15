@@ -1,0 +1,150 @@
+Interviews will ask about info from:
+Com s 228-311
+
+Splay Trees, more on 11-8-21
+----------------------------
+When the tree branches, we take a left or right path, thereby discarding a
+fraction of the search space, so for a branching tree our expected search
+time is logn.
+
+In the worst case, our tree does not have branches and is called "degenerate"
+
+6
+ \
+  7       <== creating a binary search tree from sorted or reverse-sorted input
+   \          results in a degenerate tree, It is no longer efficient for
+    8         searching because all the searches go down the same path of length
+     \        up to n.
+      9
+
+            Fixing this problem is hard, so splay trees are difficult to
+            comprehend.
+
+
+
+Binary Search Trees
+-------------------
+
+
+Returns the node containing the key, or null if not found.
+@param key
+@return key if found, null if not
+protected Node findEntry(E key)
+{
+  Node current = root;
+  while(current != null)
+  {
+    int comp = key.compareTo(current.data); // < 0 means key is smaller
+    if(comp = 0)
+    {
+      return current; // found the match because no duplicates
+    }
+    else if(comp < 0)
+    {
+      current = current.left;
+    }
+    else
+    { // rule of thumb: comment every else OR convert it to an else if so you
+          // do not have to infer what else does. else if(comp < 0)
+          current = current.right;
+    }
+  }
+  return null;
+}
+
+add
+---
+1. we need to worry about maintaining
+a) unique payloads
+b) left descendants < root < right descendants
+
+
+2. search for the element in the tree; if we found it, we return false, If we did
+not find it, it should be stuck in the first empty space we found.
+
+3. For the execution, we need to take care of empty tree corner case
+(add at root) and also to create a new node if we ever see a null node
+reference.
+
+@Return false if we found the key in the tree; so cannot add it as a duplicate
+@Override
+public boolean add(E key)
+{
+  if(root == null)
+  {
+    root = new Node(key, null);
+    size++;
+  }
+  else if(comp > 0)
+  {
+    if(current.left != null)
+    {
+      current = current.left;
+    }
+    else
+    {
+      current.left = new Node(key, current);
+      size++;
+      return true;
+    }
+  }
+  else if(comp > 0)
+  {
+    if(current.right != null)
+    {
+      current = current.right;
+    }
+    else
+    {
+      current.right = new Node(key, current);
+      size++;
+      return true;
+    }
+  }
+}
+
+
+Remove
+------
+BST Keys:
+2 6 11 13 19 25 30 32 47 49 80
+
+delete 30, 25 or 32 can take its place without altering the tree structure much
+(We hope)
+
+Let us remember 1 of the choices: the successor
+key == next largest key in the sequence.
+
+This key is found in the right subtree, farthest on the left.
+
+Make the following moves:
+  step to the right: if steps to the left are available, exhaust them all. the
+  node at the end of the path is the successor.
+
+  Leftmost number on the right is the SMALLEST of the
+  larger numbers == my successor.
+
+      I can insert my successor in my place and still preserve the search
+      property, because all the elements in the right subtree will be larger
+      than it;
+      all the elements in the left subtree will be smaller AND
+      my parent will be larger successor as well, because my successor is a
+      left descendant of the parent
+
+      We copied the successor into the original node, and now we have two copies
+      of successor. We need to delete at another place in the tree to remove
+      the anomaly. That place is the original node of the successor.
+
+      We are very lucky that the successor is guaranteed not to have 2 children
+      BECAUSE it is the smallest in its tree!
+
+      If it had a left child, it would no longer be the successor; it's left
+      child would have been the successor.
+
+      This means the successor is either a leaf or has a right child. We can
+      replace the original successor node with null.(if it has no children or
+      with its right child)
+
+
+@Override
+public boolean

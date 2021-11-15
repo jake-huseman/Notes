@@ -1,0 +1,149 @@
+Sorting with generic type arguments: 
+<? super T>
+<T extends <? super T>>
+
+Code from GenericSorter.java
+
+Reminder on compare() and compareTo(): if the result is <0, the left element (this or first param of the method) is the smaller element.
+
+Traditional way to sort: one method per object type.
+Improved way to sort: Comparator<String> so I can compare string along different criteria without rewriting the sorting method
+Generic sorting: have ONE method sort all objects if they have a comparison method implemented. 
+
+
+Method with <T>
+Generics refer to methods of data structures that specify a “Type variable” with <T>
+
+Public static <T> void selectionSort(T[]);
+
+The type variable, designated <T>, is placed before the method return type, and stands in for anything BUT you can speak
+“Bracket-speak” and give additional instructions to the compiler
+T stands for type, e.g. Employee
+
+Can name anything but common ones are:
+K for key
+V for value
+E for element
+T for type
+
+Definition of the method:
+Public static <T> void selectionSort(T[] arr)
+{
+	// method body
+	// USE T instead of object that stores the data
+	// But I cannot specify calling a custom method
+// on a T object that is not inherited from Object
+T.makeCopy() 
+// compile error: makeCopy not defined for type T ← this is because the compiler 
+// DOES NOT KNOW what the runtime type is. The solution is to instruct the compiler 
+// with our bracket speak.
+}
+
+
+Usage is a lot easier:
+Just drop in the param and the method will guess them based on the compile-time assignment:
+
+selectionSort(beeArray);
+// Compiler will say: you supplied an array of type Bee, so everywhere I see T
+// I will replace it with Bee.
+
+Because generics were not a base line feature, they were retrofitted on top of the existing compiler to prevent breaking legacy code.
+
+The way is works is the compiler rewrites the source with overwriting T with the inferred type.
+
+E.g. selection sort has a <T> before the return type and T is manipulated inside the method body.
+
+We pass it a beeArr of Bee objects, and the compiler will replace T with Bee everywhere in the code.
+
+Generics interacted with inheritance to create some problems and to solve them we came up 
+
+<? super T>
+
+<? extends Comparable<? super T>>
+
+Inside angle brackets, extends refers to both extending a class and implementing an interface. There is no <implements> inside angle brackets.
+
+Let us assume that we want to create a sorting method that takes type T and also a Comparator<T> to sort most anything that has a comparator!
+
+public static <T> selectionSort(T[] arr, Comparator<T> comp)
+{
+	// code for selection sort…
+	if(comp.compare(arr[j], arr[minIndex) < 0)
+	{
+		minIndex = j;
+	}
+}
+
+Will this work? Yes!
+Will this work for all objects? No!
+
+In particular, objects which have the comparison defined in their ancestors will NOT be accepted by the compiler.
+
+Bee is an example: it compares in Insect!
+
+Usage:
+selectionSort(myBees, new InsectComparator());
+// will not compile!
+
+The compiler interpreted our bracket-speak literally:
+
+public static <T> selectionSort(T[] arr, Comparator<T> comp)
+//we said, “take any object T that has a comparator for T defined”
+
+So I only accept Bee if it has a Comparator<Bee> defined!
+						-- the java compiler
+
+The compiler infers the object type from the first argument, then rewrites the source with the first argument substituted for T.
+
+
+Horse-whispering to accept comparators defined in ancestor objects:
+public static <T> selectionSort(T[] arr, Comparator<? super T> comp)
+{
+ 	// we tell to accept objects that have their own comparator or an ancestor comparator.
+
+Literal translation: “the comparator can be any object that is an ancestor of T and T itself.”
+
+
+Next level of difficulty for bracket-speak is method 4 in GenericSort.java
+
+public static <T extends Comparable<? super T>> void selectionSort(T[] arr)
+{
+Turns out that the more intuitive way of writing sit is again restrictive to inheritance-based objects.
+
+We are trying to implement a Comparable<T> sorting method to objects with natural ordering.
+
+First try:
+Public static <T> void selectionSort(T[] arr) 
+{
+	//when we are calling
+	T.compareTo() 
+
+// compiler error: CompareTo() we not specified to be a requirement for this object. You told
+// me to take any type T -- the compiler
+
+Second try: we will only accept objects that have the compareTo() method
+
+Public static <T extends Comparable<T>> void selectionSort(...)
+
+This will work on most objects: it will not throw compareTo() is unknown!
+
+
+T is an object at runtime
+<T extends comparable<T>>
+	take only objects that extend comparable
+	
+Objects that compare somewhere in their anncestors, will be accepted by the above pharsing.
+
+SelectionSort(myBees);
+	// complier error: Bee does not implement Comparable<Bee>
+	
+Literally said:
+	T extends Comparable<T> into Bee extends Comparable<Bee>
+
+Solution:
+<T extends comparable<? super T>>
+
+? = "any" (object or class)
+
+Extends = I am a decendant.
+Super = I am the ancestor.

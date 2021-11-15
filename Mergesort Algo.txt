@@ -1,0 +1,103 @@
+Section C - Kildee 0125 
+Online review saturday at 7PM on webex 
+
+---------------
+Merge Sort 0(nlogn) //fastest we can sort
+---------------
+
+Algo type: “lazy” because it doesn't do all the sorting work.
+“Lazy” is a compliment in the realm of algos.
+
+Mergesort “kinda-sorta” sorts, but no portion of the code sorts explicitly; instead delays sorting to its recursive calls.
+
+
+Algo Intuition:
+Recursive method: the termination condition comes first and should be foremost on our minds.
+Termination condition != base case
+
+Termination condition is “cannot sort an array smaller than size 1” so return when n = 1.
+
+If 2.5 just do 2.
+Mergesort(A) where A is an array of size n
+0. Termination Condition
+If n <= 1 return
+Find the median index, which is (0+n-1)/2
+Let B be the left subarray with items A_0….A_m // linear or constant
+Let C be the right subarray with items A_m+1….A_n-1 // linear or constant
+B = MergeSort (B) // tell yourself to sort B
+C = MergeSort(C) // tell yourself to sort C
+Return Merge(B, C) // Assuming they are sorted, put them back together.
+
+
+Algo code
+	n = A.length // for explicitness
+0. If n <= 1 return // termination step 0
+1. M = first + last/2 //integer division
+2. B = A_first...A_m
+3. C = A_m+1...A_last-1
+4. B = MERGESORT(B) // hand off the work to myself 
+5. C = MERGESORT(C) // hand off the work to myself
+6. Return MERGE(B,C) // put two sorted subarrays together
+
+
+
+Intuition for merge:
+Pick the smaller of two items into the combined array.
+At the end, if one shelf is exhausted, append the other without checking.
+
+Expanding 1 to include counters:
+Need counter i, j for the two sorted subarrays B and C.
+Need counter k for the resulting array D
+
+Elaborating on step 1:
+	If B[i] is the smaller element,
+		Append B[i] to D[k]
+		I++; k++;
+	Else
+		Append C[j] to D[k]
+		j++; k++;
+
+
+Merge() algo:
+MERGE(B, C)
+	P = B.length, q = C.length //termination conditions
+	Create an empty array D of length p+q
+	i = 0, j = 0
+	While i < p && j < 1       // compare two elements from the subarray and paste smaller   
+// one in the combined array
+		If B[i] <= C[j]
+			Append B[i] to D
+			i++
+		Else
+			Append C[j] to D
+			j++
+After the end of the while loop, check if elements are left over that are not part of the new array
+If i < p
+	Append C[j],...,C[q-1] to D
+Return D
+
+------------------------------------------------------------------------------------------------------
+Big-O Analysis of number of execution steps needs to include method call history
+------------------------------------------------------------------------------------------------------
+Compute Big-O of the method
++
+Compute the number of method calls that happened on the call stack.
+
+
+
+Step 1: Compute big-o of the method:
+The while loop is linear because p+q = n at the highest level. (still we should check if the number of items remains the same over different recursion depths)
+
+The if-else statement at the end appends entire arrays, so the working hypothesis is that it is linear.
+The worst case scenario is one subarray is strictly smaller, so the other subarray will be appended with the if-else statement.
+
+How big can one subarray be? Because we divide by the midpoint, the largest a subarray can be is n/2
+Then the while loop is linear and the if-then is linear, but the two share the number of elements they process. The if-then statement will append many elements ONLY if the while loop did not execute many time and vice versa.
+
+Worst-case execution of 1 method call of MergeSort is linear because of the merge operation.
+
+How many times does MergeSort execute and how do the array sizes change?
+We are not duplicating any work.
+
+At each depth of the recursion we process a coA
+

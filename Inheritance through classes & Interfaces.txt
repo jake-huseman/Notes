@@ -1,0 +1,58 @@
+(Implements vs Extends)
+
+Static vs Dynamic types
+-binding in java
+-no static types in python
+
+Polymorphic varibles
+- meaning every decendent can substitute for an ancestor. But, not vice versa.
+
+
+Dependent classes can (extends Parent class) // Already implemented and can be called directly
+-Implement methods in an interface 
+-Inherit methods from a superclass, adds new methods and overrides exsisting methods.
+
+Override == redeclare exsiting methods
+overload == mulitple methods with same param  
+
+
+You can extend a concreate class and that one does not have a contract attached.
+-- if there are no abstract methods, there is no obligation to implement a method.
+-- if the class has one or more unimplemented "abstract" methods, then you are under the obligation to create code for it.
+
+Difference between extends and implements
+-Extends is used with classes
+-Implements is used with interfaces
+
+A class may extend only one other class
+BUT
+It may implement as many interfaces as it wants
+
+
+Static typing means varibles have defined types.
+String, int, boolean, etc.
+
+This means a memory location has an associated object type, and it will not accept any other type.
+
+In python, you do not declare a memory location to be of a type;
+StudentID = 123
+StudentID = "John Doe"
+
+This is a trade off: python is a scripting language and the lack of static typing makes it easier to write short programs.
+
+Java is on of the hardest languages to write short programs, but shines in very large projects.
+
+Java does allow descendants of a class to be stored in the class varible... aka Dynamic Binding.
+
+
+An insect ancestor may have 500,000 descendants, and all of them can be assigned to a insect.
+Cannot substitue for siblings
+Cast Parent to a Child
+
+Casting tells the compiler, "I know what I am doing, this is a bee, one of your decendents"
+
+Casting means another compatable type in parentheses to tell the compiler to regard the varibles as another type of varible.
+
+Casting only works for the line it is used on.
+
+((Bee) b.makeHoney)  ??

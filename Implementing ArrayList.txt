@@ -1,0 +1,104 @@
+Implementing Arraylist
+
+Collection<E> is a java interface that is the minimum required functionality of a data structure.
+It does not even have indexing.
+
+Collection is the equivalent of a sack or pouch. Put items in, remove, can take them all out and
+look at them. But, they are not numbered.
+
+Indexing items requires more than a sack...
+"portable medicine cabinet"
+
+Collection methods required
+|
+v
+
+boolean add(E item)
+	int size()
+	boolean contains(Object obj)
+	boolean remove(Object obj)
+	Iterator<E> iterator()
+	
+
+Oterator is an architectual solution geared at large scale projects where the responsibility for traversing a
+data structure is isolated in its own class. Rather than being apart of the orginal collection.
+To prevent the apperance of "God" objects.
+
+Iterator is suppouse to serve all items once. No expection of ordering in collection.
+
+
+while(iter.hasNext())
+{
+	String s = iter.next();
+	System.out.println(s);
+}
+uses the following methods
+|
+v
+next() // get next item from sack
+hasNext() // is there a next item?
+remove() // can only delete an item that was served
+		 // remove() does not work unless next() has been called
+		
+Collection being a industrial strength interface with many methods.
+So, we have abstract AbstractCollection<E> which implements almost all these methods.
+But, iterator<E> and size() which are declared abstract.
+
+Public class myCollection<E> extends AbstractCollection<E>
+
+Baseline methods are enough, but we have many derivative methods that are pre-implemented to ecourage reuse.
+
+Iterators to a collection are provided by the collection itself via:
+MyCollection.iterator(); // returns
+
+
+For each loop: // implicitly calls the iterator and uses it to travese a data structure.
+for(String s: myStringCollection)
+{
+	System.out.println(s);
+}
+
+hasNext() checks if we have a next element to serve.
+
+next() serves the next element AND advances our position in the sequence. The position is unnumbered.
+
+Making our ownn firstCollection (cheap array-based collection)
+
+Concept:
+size, that is an int, keeps track of how many elements we have.
+
+Array, this will be of type E because we want to use it for any object.
+
+// need size(), iterator() and constructors
+public class firstCollection
+{
+	// default contructor
+	public firstCollection() {}
+	
+	public firstCollection(int intitialCapacity)
+	{
+		E[] data = (E[]) new Object[intitialCapacity];
+		// creates an array of empty E refrences, but no objects.
+		size = 0;
+		// not capacity, but number of items.
+	}
+	
+	/**
+	* Add item at index size
+	**/
+	@Override
+	public boolean add(E item)
+	{
+		checkCapacity(); // double array size if we used up all space
+		data[size] = item;
+		size++; 
+		return true;
+	}
+	
+	public void checkCapacity()
+	{
+		if(size == data.length)
+		{
+			data = Arrays.copyOf(data, data.length * 2);
+		}
+	}

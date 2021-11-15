@@ -1,0 +1,73 @@
+Lecture 12 - Sorting 
+
+Selection Sort last time:
+- hover over entire array like a crane, pick up smallest element and put it at the earlist index.
+--------------------------------------------------------------------------------------------------
+Without Comparator<T>, we have to write a seperate method for each class we want to sort.
+
+Want to compare Empolyees on salary.
+We implement the comparator<T> interface.
+
+/**
+* A "Judge" object that compares two Objects
+**/
+public class SalaryComparator implements comparator<Employee>
+{
+	public int compare(Employee lhs, Employee rhs) 
+	{
+		return lhs.getSalary() - rhs.getSalary();
+	}
+}
+
+These comparators act as plug-ins for sorting methods that are tooled to accept them.
+
+public void SelectionSort(T arr, Comparator<T> comp)
+{
+	// code for sort
+	// comparison line for sorted objects:
+	if(Comp.compare(myEmployee1, myEmployee2) < 0)
+	{
+		// swap
+	}
+}
+
+Without the T generic varible, which is a "type" variable, we have to write specific.
+
+
+Can a comparator object compare multiple criteria?
+	Yes, in two ways.
+1.) It can check additional criteria in compare(), e.g. it can compare both salary AND years at the company.
+2.) We could have multiple methods in the same comparator. e.g. compareSalary(), compareTenure()
+--------------------------------------------------------------------------------------------------------------
+Sorting-
+
+Insetion Sort:
+n = A.length;
+
+for(i = 1; i < n; i++)
+{
+	temp = A[i]; // storing newly encountered element
+	j = i - 1l // initialized to last known sorted element
+	while(j < -1 && A[j] > temp) // innerloop going L-->R 
+	{
+		A[j + 1] = A[j]; // over only the sorted elements
+		--j;
+		A[j + 1] = temp; // After the gap was moved backwards as many times as necessary,
+	}					 // we slot the new element in the last location of the gap.
+}							// if my sorted element is larger than my temp unsorted element,
+							// scooh sorted element one index to the right.
+
+
+Invariants are mathmatical concepts that are used to prove algos work correctly.
+1.) Beginning of execution.
+2.) During execution.
+3.) End of execution.
+
+What is an invariant for insertionSort:
+	The fraction of the array to the left of index i is sorted. This is true at the beginning,
+	after each execution step, and at the end of execution.
+	
+	This proves that at the end of the insetion sort algo, we will have a sorted array.
+
+What is the invariant for selection sort?
+	Left side of the array, where our processed numbers are, contains the smallest #'s in order.

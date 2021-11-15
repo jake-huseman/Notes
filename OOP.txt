@@ -1,0 +1,86 @@
+OOP(object originated programming): Encapsulation, inheritance, polymorphism
+--encapsulation means independence and has been practiced in all of programming, not OOP.
+--polymorphism means being able to work with differently shaped data/objects
+Responsibility for varying behavior should be borne by the objects that vary.
+Example:
+Map drawing package that uses geometric forms:
+Instead of if-else statements dealing with each shape, ask each shape to supply its own calculation
+
+E.g
+Shape01.getArea();
+//the client code knows nothing about how calculate the area but works. 
+--polymorphism is also not new to OOP; has existed in procedural programming.
+--inheritance is the new element
+--it is demanded by the need for software to mirror the real world.
+
+--most objects and phenomena in the real world group into hierarchies, 
+E.g.
+Celestial bodies: stars, planets, planetoids, comets, different kinds of stars, different kinds of planets.
+
+--from a practical perspective, inheritance reduces duplication, which is the No. 1 enemy of good engineering. 
+Why is it an enemy? Because when changing anything inside duplicated code, you run the risk of forgetting a copy where this needs to be changed. 
+These are the hardest kind of bugs to find.
+
+Inheritance allows it to have all the duplicate code in an ancestor.
+
+Objects have state, identity, operations
+--state means object variables
+--operations means methods
+--only new kid on the block is identity Just 
+Refresher on this, local vs, instance vars
+--local variables == method variables exist during a methods execution only.
+--instance variables == object variables exist while an object is in memory.
+--this is the “identity” concept materialized:
+	Real-world objects have identity even if they don't have a name, e.g. a stray dog
+	This is how an object refers to itself; it is the objects “I”.
+	You Can use “this” to pass the current object to another method.
+	Use of the 2nd constructor on p. 9 of 02.pdf:
+
+	Point p = new Point(3,7);
+	
+Inheritance through interfaces and abstract classes
+Interface: collection of unimplemented methods.
+Acts as a contract in the legal sense of the word.
+In the real world, a contract is binding on two parties so that performance can be enforced through the judiciary. 
+In java, the compiler enforces the implementation of an interface by refusing to run until all methods are implemented. 
+
+Example: 
+
+//the locomotion contract requires that your objects has a 
+Public interface Locomotion {
+	Void move();
+}
+
+Public class RaceCar implements Locomotion {
+@Override 
+Void move() {
+	s.o.p(“Zoom along”);
+}
+}
+
+Abstract classes: 
+A abstract class is a class that has at least one unimplemented method. 
+
+Public abstract class RaceCar2 implements Locomotion {
+@Override 
+Void move() {
+	s.o.p(“Zoom along”);
+}
+//method that needs to be implemented by a concrete class for the program to run.
+Public abstract void setSponcer();
+
+Public class DodgeRaceCar extends RaceCar2 {
+@override
+Public void setSponcer(){
+	Sponsor == “Philip morris”;
+}
+}
+A fully abstract class has nothing implemented, only method signatures.
+
+A interface is a fully abstract class.
+
+
+Static typing vs dynamic binding; statically typed vs dynamically typed languages
+
+Problem #1 is non-linear scaling of difficulty as projects increase in size.
+

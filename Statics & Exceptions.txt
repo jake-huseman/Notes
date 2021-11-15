@@ -1,0 +1,213 @@
+Some restrictions on overriding methods.
+
+Cannot change methods name or parameter
+Can change from protected to public, but cannot make the access more restrictive
+--prevent locking down a codebase
+--for reverse compatibility
+You can omit a throws declaration, but cannot add a throws declaration.
+	--ensure backward compatibility. Your client code does not need to changer to handle a new exception
+
+Backwards compatibility means the contract of the original class is fulfilled which means the client code does not need to change at all.
+-----------------------------------------------------------------------------------------------------
+Static variables and methods
+
+Static variables have nothing to do with static typing.
+--static typing: each variable is a location in memory that only accepts a particular object/primitive and its descendants.
+static variables and methods are part of the class definition and are not part of any object.
+
+Property 1: only one copy of each static member and all objects share it
+
+Class Person
+{
+	Public static int numberOfPeople;
+	Public string name;
+	Public Person(String name) 
+	{
+		This.name = name;
+		numberOfPeople++;
+	}
+}
+If I create 3 person objects, each one of them, when asked S.o.p(Person.numberOfPeople) //3
+Property 2: even if no objects instantiated of the class, the static member can be called. E.g. I can query.
+
+Person.numberOfPeople
+
+Even if no Person object exists.
+
+Property 3: static members cannot see non-static members.
+(because there may be none)
+
+In particular, 
+None -static methods get passed “this” implicitly. 
+Static members do not get a “this” reference.
+Static members are called from the class name:
+Person.numberOfPeople
+
+Person Joe = new Person(“Joe”);
+Joe.numberOfPeople - compiles and runs BUT is a bad practice because it obscures the fact that numberOfPeople is static.
+
+Public static numberOfPeople is visible everywhere that Person is visible.
+
+Private static numberOfPeople is visible only inside Person.
+
+Static members can ONLY see other static members by default.
+
+Public class MainClass
+{
+	Public 	static void main()
+	{
+		myMethod1(); //compile error: cannot call non-static method myMethod1					  // from static method main.
+	}
+Void myMethod1()
+{
+	s.o.p(“Konichiwa”);
+}
+
+Explanation of above: main() has to be static because it has to exist before any objects are created.
+
+How to fix the error?
+Have to create an object to invoke non-static methods:
+Public static void main()
+{
+	MainClass myNewClass = new MainClass();
+	myNewClass.myMethod1();
+}
+
+Static methods can handle non static members if those are passed to them as parameters OR if they create them.
+
+E.g. Math.cos() is a static library function
+
+Static methods are like conveyor belts: they do not touch variables OTHER than parameters and return variable.
+
+
+
+Method variables vs object variables vs class variables
+VS (alt wording)
+Local variables vs instance variables vs class/static variables
+
+Object variables are created when an object is created and destroyed when the object is destroyed.
+
+Class variables (AKA static) are created when the program starts and are destroyed when the program terminates.
+
+
+-------------------
+Exceptions
+-------------------
+Why do they exist?
+--not a concept that existed at the beginning
+--before exceptions, we had errors.
+	--errors have to be handled right after they occur, in the method that			 created the error.
+	(with if statements) - If error is not handled, the program terminates.
+--Two conditions 
+Not all errors should result in program termination
+We would like to handle errors elsewhere in the call stack. That way, we can catch a host of errors that threw exceptions and give a generic method and continue running the program.
+OR
+Error handling can be in one place.
+
+The way a normal exception works: an abnormal state occurs, an exception is generated and “thrown”. Some method has to catch it to attempt to recover. The original method is first, then the method that called the original method, and so on until main(). If main() cannot handle it, then the program terminates.
+
+
+2. Example of catching an exception:
+
+Public static void main(String[] args)
+{
+	InputStream istream;
+	File inputFile;
+	Try
+	{
+		inputFile = new File(args[0]);
+		Istream = new InputStream(inputFile);
+	}
+	Catch (FileNotFoundException ex)
+	{
+
+
+
+
+
+
+3. General syntax for catching exceptions:
+
+Try 
+{
+	//statements that might cause exceptions
+}
+catch(exception-1 id-1)
+{
+	//statements to  handle this exception
+}
+Catch (Exception-2 id-2)
+{
+	//statements to handle this exception
+}
+Finally
+{
+	//statements to execute every time this try block executes
+}
+
+Finally executes regardless of whether an exception was thrown.
+This is used usually to release resources such as closing files or database connections.
+
+
+4. Checked vs unchecked exceptions
+Checked exceptions are monitored by the compiler.
+
+They are declared by the code designers, who declare if you as a method user are responsible for handling an abnormal state.
+
+Checked exceptions force the programmer to either catch them or rethrow them from the method that calls the exception generating method.
+
+Public void MyMethod() throws MyCallMethodException.
+
+-unchecked exceptions are those that you may not be expected to recover from (they are a bug)
+Example: IndexOutOfBoundException, ClassCastException
+Means that the program should go back to the drawing board, because that is a bug, not a problem with the environment of the program.
+
+
+Hierarchy for ArrayOutOfBoundsException and ClassCastException
+
+                              Object
+                             Throwable
+Error (Unchecked/Can’t recover) & Exception (Checked/Can recover)
+                                    RunTimeException(Unchecked)
+
+Class MyException extends Exception
+{
+
+	Public MyExpection()
+	{
+		super();
+	}
+
+	Public MyException(String s)
+	{
+		super(s);
+	}
+}
+
+To catch ALL exceptions (should do as LAST exception because it can catch all.
+Catch (Exception e)
+
+7. Throwing exceptions
+
+Public class Stack 
+{
+	//...other methods
+	Public Object pop() throws EmptyStackException
+	{
+		if(Empty())
+		{
+			Throw new EmptyStackException();
+			//...other code
+		}
+	}
+	Public void MyMethod() throws EmptyStackException
+	{
+		pop();
+	}
+}
+
+//calling pop() must be wrapped in a try-catch block
+
+
+
+***

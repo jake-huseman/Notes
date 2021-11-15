@@ -1,0 +1,112 @@
+Copying and cloning
+Point makeCopy(Point p) //custom method
+Point(Point p) //copy constructor
+clone() //hurdles set up by Java to prevent misuse.
+
+
+Method 1: copying a Point:
+
+Public Point makeCopy(Point other) {
+	Point newPoint = new Point();
+newPoint.setX(other.getX());
+newPoint.setY(other.getY());
+Return newPoint;
+}
+//v.2 where we don't bother overriding clone() which is the correct strategy.
+Public Point makeCopyOfMyself() {
+	Point newPoint = new Point();
+newPoint.setX(other.getX());
+newPoint.setY(other.getY());
+	Return newPoint;
+
+}
+Correct strategy for your own code: do not bother with clone().
+But for the exam ~10% will be a clone() method BECAUSE it exists in codebases.
+
+Memorize the steps for cloning:
+(will not execute without them being followed)
+
+Step 1.
+Enclosing class needs to implement Cloneable (interface) with method clone()
+
+Step 2. @Override clone() because an implementation exists in Object, BUT it cannot be accessed OTHER than from a descendant method.
+
+Step 3. Invoke super.clone() inside your clone() implementation before custom copying code.
+
+Step 4. Wrap the clone() call in a try-catch block that catches CloneNotSupportedException and does nothing with it.
+
+
+
+
+
+
+Method 3: Overriding the clone() method
+
+@Override //Step 2. Override clone
+Public Object clone() {
+	Point copy = null;
+	Try
+	{
+		// super.clone() creates copy of all fields
+		Copy = (Point) super.clone(); //Step 3. Call super.clone()
+	}
+	Catch (CloneNotSupportedException e)
+	{ //step 4. Include try-catch{} statement.
+
+//Should never happen unless there’s a programming error: in particular gets            //thrown if “implements CLoneable” is absent! 
+}
+Return copy;
+}
+
+All this clerical work is to prevent the easy use of Object.clone()
+
+Object.clone() does NOT know what the object looks like because it is an ancestor.
+What it does is call a system function to COPY the memory bit-by-bit of the current object to a new location.
+
+This works for ALL objects that do NOT contain other Objects.
+If the objects contain primitives, super.clone is enough!
+
+Let us extend the concept of point to n dimensions.
+
+New class:
+IntVector ~ int Point in several dimensions, e.g. 3
+
+Int dim; //number of dimensions, usually 2 or 3
+
+Int [] coords; //array of coordinates of size dim
+-----------------------------------------------------------------
+
+How to recursively copy a complex object with many nested references of multiple levels?
+
+Answer: create copy methods for all the most deeply nested objects and call them from their enclosing objects
+
+Compose a copy method for a complex class from the copy methods of its constituent classes.
+
+Equals has the same problem: deep equals()  means check if referenced objects are distinct.
+
+@Override
+public boolean equals(Object obj)
+{
+	if(obj == null || obj.getClass() != this.getClass())
+	{
+		return false;
+	}
+	IntVector other = (IntVector) obj;
+	
+	if(dim == other.dim)
+	{
+		// check wheter all coordinates are the same
+		for(int i = 0; i < dim; i++)
+		{
+			if(coords[i] != other.coords[i])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

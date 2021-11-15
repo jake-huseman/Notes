@@ -1,0 +1,139 @@
+Abstract hardware and software environment by counting steps as a function of input size, e.g. -- to process n elements, I need n computer instructions. == T(n)
+Discard all constants and non-significant terms in the resulting polynomial. == O(n)
+
+Example:
+Finding if all elements of one array are in another array == determine array equality 
+Both arrays a and b are of size n
+
+Worst case: n different elements, I do not find the last element, and I take the longest possible time going through the B array for each element in A.
+E.g. forward-sorted A array, reverse-sorted B array
+[1 2 3 4] [4 3 2 1]
+Worst inner loop iteration is n elements
+Best inner loop iteration is 1 elements
+Average is n/2
+This is still linear time, because n*n/2 is in O(n^2)
+
+i = 0;                                                          1 op
+While i < n                                                 n + 1 ops (n true, 1 false)
+	Found = false                                1 op (* n)
+	J = 0                                              1 op (* n)
+	While j < n                                     n + 1 ops (n true, 1 false)
+		if(a[i] == b[j]                       1 op (* n * n)
+			Found = true         1 op (* n)
+			Break                    1 op (* n)
+		++j                                    1 op (* n * n)
+	If !found			      1 op (* n)
+		Return false                      1 op (once per program)
+	++i                                                1 op (* n)
+Return true 				      1 op (once per program, exclusive with return false)
+
+
+T(n) = 1 + 1 + n[1 + 1 + 1+n(1 + 1) + 1 + 1 + 1 + 1] + 1  
+= 2 + n(3+3n+3+4)+1 =  3 + 3n + 3n^2 +3n +4n
+= 3n^2 +10n + 3
+
+3n^2 + 10n + 3 is in O(n^2) because I can pick c to add all the constants in the polynomial:
+
+(3 + 10 + 3) * n^2 
+= 16n^2 > 3n^2 + 10n + 3 for n > 1
+
+
+Example 2:
+Binary Search
+
+Binary Search(A, v) //A must be sorted
+N = A.size
+Left = 0
+Right = n - 1
+While left <= right //looks like linear at first approximation because it is a loop
+	Mid = (left + right) / 2
+	If v < A[mid] == v
+		Return true
+	If v < A[mid]
+		Right = mid - 1
+	Else
+		Left = mid + 1
+Return false
+
+How to find O(n)
+Check if method is recursive (if yes, reason about call history)
+If it is a loop, it is probably O(n), but we need to check loop conditions (!!! important. On exam, may look linear but not! Examples under)
+If it is not a loop, it is O(1) 
+
+We need to examine the loop conditions in example 2. They do not look like normal conditions.
+Running for 3 steps, we saw left and right be updated to the middle of their current array window
+
+Starting with n:
+Everytime we execute the while loop, we divide the array window in half until we reach window size = 1 
+	K times
+
+n/2 /2 /2 /2 …. = 1
+K is how many times the loop ran!
+
+N /2 (2*2*2……*2) = 1
+==
+2^k = n
+Which is the definition of logn.
+
+K = logn
+log(1,000,000,000) = 30
+# repetitions is logn whenever we remove a fraction of the original input size at each iteration. Even if we remove 1% of the array under consideration, the algorithm is still logarithmic, with possibly a large constant; for 1% it is 69logn
+
+
+Example 3: (similar to exam problem)
+
+Void foo(int n)
+{
+	While (n < 1)
+	{
+		N = n / 3;
+	}
+}
+
+Starting with n, we are going towards 1 and we are dividing n by 3 every time:
+	K times
+n/3/3/3/3……. = 1
+
+3^k = n
+K = log3(n)
+
+Logarithm conversion from arbitrary base to base 2:
+Log2(n) = logb(n)/logb(2)
+
+
+Example 4: Subset sum
+
+Input: An array A with n elements and a number K.
+Question: Does A contain a subset of elements that adds up to exactly K?
+
+E.g. target number is 117
+My leather pouch contains 
+	2, 5, 13, 15, 19, 27, 35, 39
+
+
+We must brute force this problem because it is np-complete. This is a class of problems that have brute force solutions and may have smarter solutions but we do not know how to do them.
+
+Computing the sum of any collection of integers is O(n)
+
+Enumerating the subsets:
+
+We can represent them as a bit string:
+1 if integer is calculated in sum, 0 otherwise
+
+2, 5, 13, 15, 19, 27, 35, 39
+0  0   0    0   0    0    0    0
+0  0   0    0   0    0    0    1
+0  0   0    0   0    0    1    0
+0  0   0    0   0    0    1    1
+…
+1  1  1     1    1   1    1    1
+
+2 * 2 * 2 * 2 * 2 * 2 * 2 * 2
+
+2^8 = 256 subsets.
+
+Each subset takes O(n) to add;
+
+Total O(n) is n*2^n, where n is the number of integers in the leather pouch.
+
+

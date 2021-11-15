@@ -1,0 +1,163 @@
+Inner class for FirstCollection so it can see the private items
+
+Public class FirstCollection 
+// this class has access to all private members of 	   
+ // FirstCollection AND is inaccessible to the client unless served by the iterator() method
+{
+	Private FirstCollectionIterator<E> 
+implements Iteator<E>
+	{
+		Int cursor;	 // cursor here is the index of 
+				// current element
+		Public boolean hasNext(); 	// these are perfectly
+		Public E next();		// usable once access has
+		Public void remove();	// been granted
+	}
+}
+ 
+remove() is special in being tuned for large projects
+In particular, remove() can only be called after next()
+The responsibility to delete an item is the only thing remove() fulfills. It does not advance the cursor.
+Iterator iter = MyCollection1.iterator(); // get iterator
+iter.remove(); 
+// throws IllegalStateException, signalling the data structure cannot support the remove 
+// operation in its current state.
+
+Remove only works with served elements, in particular the last served element
+E dataItem = iter.next(); // ok
+
+iter.remove() 
+// will remove dataItem from the collection that does not mean dataItem will cease to 	// exist.
+
+iter.remove(); 
+// throws IllegalStateException: (no element has been served and I cannot 
+// delete it).
+
+In particular, we have an engineering principle of one responsibility per element.
+You are not allowed to traverse the structure while deleting.
+remove () should not be iterating, so it can only be called after iteration has been performed by next().
+
+remove(E data) can be implemented with a call to contains() and then a while loop to search through until it finds it, then remove()
+
+
+Private class MyIterator<E>  implements Iterator<E>
+{
+Int cursor;
+Boolean canDelete;
+Public MyIterator()
+{
+	Cursor = 0;
+	canDelete = false;
+}
+@override
+Public boolean hasNext()
+{
+	Return cursor < size; 	// size is from Collection, not iterator.
+}
+@override
+Public E next()
+{
+	if(cursor >= size) throw new NoSuchElementException(); // exception										//  informing that the 					// contract for the iterator has been broken.
+	canRemove = true;
+	E result = data[cursor];
+}
+
+
+
+5 7 1 4 7 2 I want to delete 1
+
+// cannot leave gaps in the array, fixing gaps is costly
+// need to shrink the array to fill the gap, copying over all right side elements one 
+// index to the left:
+5 7 4 6 2 2 // two will be repeated twice because we copied it over
+// we need a while loop
+	for(int j = cursor; j < size; j++)
+	{
+		Data[j - 1] = data[j]; // scooch over to the left leaves the last element 	//duplicated
+}
+Data[size - 1] = null // clear out the second copy to prevent a memory leak
+Size--; // size is smalled by 1 element now
+Cursor--;
+@override
+	Public void remove()
+	{
+		if(!canRemove)
+		{
+			Throw new illegalStateException();
+		}
+		for(int i = cursor; i < size; ++i)
+		{
+			Data[i - 1] = null; // clear out the second memory leak
+			Size--; // size is smaller
+			
+
+
+
+Linked list----------------------------------------------
+Linked list is made of custom nodes in custom locations in memory,
+Public class NodeDemo
+{
+	Private class node
+	{
+		Public Object data;
+		Public Node next;
+		Public Node(Object data)
+		{
+			This.data = data;
+		}
+	}
+}
+Both iterator and Node are going to use the public-private-public idiom.
+Nodes are never served to the client, adn the client only see data items.
+
+If you have public variable in a private method, the convention is to not have setters and getters for those variables. So data and next are called directly.
+Here is what a node looks like in memory.
+Head: 0xABA (some memory address)
+	|
+	|
+|
+V
+[0xABA] “MyPayloadString’ | 0x02B (this is the Node next reference)
+					|
+					|
+					|
+					V
+			[0x02b] “MyPayloadString2” |null (no more next nodes)
+I can queue as many “next” nodes as i want.
+head→ “A”--->”B”--->”C”--->null;
+S.O.Pln(head.next.next); // prints “C”
+Head.next.next.next.next...47 times if there are 48 nodes.
+I have chained objects in arbitrary locations in memory unlike an array, we don't need contiguous memory; just many small chunks of memory.
+Accessing each next element is slower than in an array by some constant. Does not make an algo less efficient but it is somewhat slower in the real world:
+Instead of accessing next element in the processor cache (if this were an array), we are hunting separate memory locations every time, and memory is slower than processor cache.
+But, with linked list, you can add and delete in constant time.
+
+
+
+Creating the list:
+
+Node head = new Node(“A”);
+Head.next = new Node(“B”); //Java decides the address for all these objects
+Head.next.next = new Node(“C”);
+We can now get to an arbitrary node:
+S.O.Pln(head.data);
+S.O.Pln(head.next.data);
+Etc…
+More than 2 next invocations is a code smell;
+instead , roll a traversal loop:
+
+Node current = head;
+while(current != null) 
+// linked list chain breaks at null and there are no nodes reachable so make sure not // to null out a “next” in the middle of a linked list.
+{
+	S.O.P(current.data);
+	if(current.data.equals(target)
+	{
+		//do something
+	}
+	Current = current.next; // advance through list.
+}
+head.next.next = head.next.next.next; 
+// deletes a node irreparably
+
+

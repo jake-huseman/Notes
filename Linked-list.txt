@@ -1,0 +1,164 @@
+Null-terminated singly-linked list
+-All lists have a head reference
+-list has a next reference field
+-ends when there are no next addresses to follow
+
+Node
+{
+	Node next; // claim to fame of linked list
+	E data;
+}
+Creating the list:
+
+Node head = new Node(“A”);
+Head.next = new Node(“B”);
+Head.next.next = new Node(“C”);
+
+We can now get an arbitrary node:
+S.o.p(head.data);
+s.o.p(head.next.data);
+s.o.p(head.next.next.data);
+s.o.p(head.next.next.next.data)
+
+
+
+Head by itself is just an empty memory location (head == null)
+Head with an object attached resolves to that object’s memory location, so we can talk about head.next
+
+
+Head.next.next.next = head.next.next.next;
+// deletes head.next.next;
+P.8 of 18.pdf
+
+
+Iterating through a linked-list:
+Current = head; // if head is null, list is empty
+//simple traversal
+while(current != null) // goes until hits null aka end of list
+{
+	s.o.p(current.data);
+	Current = current.next;
+}
+
+// looking for a node itself
+//simple traversal
+while(current.data != myNode)
+{
+	s.o.p(current.data);
+	Current = current.next;
+}
+//looking for a piece of data
+//simple traversal
+while(current != mySearchTerm)
+{
+	s.o.p(current.data);
+	Current = current.next;
+}
+ 
+Strengths of linked-list
+O(1) add() and delete() unlike array
+
+Weakness of singly-linked list?
+Can destroy a linked list easily by nulling out the wrong location
+No random access
+Cannot go to the previous element easily
+
+Doubly-linked list:
+We fix the backward progression problem by adding a node previous to our node class:
+Node
+{
+	Node previous;
+	Node next;
+	E data;
+}
+A more structurally complicated linked list is easier to program for. The simpler linked lists have extra corner cases to program into methods. 
+
+
+Linked list vs collection vs list
+
+Collection is a java interface.
+List is a java interface extending collection.
+ Linked list is a data structure made of node objects that have up to 2 other node references.
+3 is 30 years older than 1 and 2.
+1 and 2 are contracts, while 3 is an implementation
+
+
+
+Public class DoublyLinkedCollection<E>
+Extends AbstractCollection<E>
+{
+	Private node head = null;
+	Private int size = 0;
+	Private node 
+}
+Private class Node
+{
+	Public E data;
+}
+		
+@override
+Public boolean add(E item)
+{
+	// add at beginning because we do not need order in collection
+Node temp = new Node(item,  head, null);
+if(head != null)
+{
+	Head.previous = temp;
+}
+Head = temp;
+++size;
+Return True;
+}
+
+@override
+Public Iterator<E> iterator()
+{
+	Return new LinkedIterator();
+}
+	Two helper references(aka “cables”)
+		Cursor - its job is to hover on a yet-unserved data node
+		Pending - its job is to be linked to the currency-served data node. Pending is 	the slave of remove() is the only reason it exists
+NOTE: we do not HAVE to have pending to implement the functionality; we can do the same with cursor + boolean canRemove;
+
+
+
+Private Node cursor = head;
+Private Node pending = null;
+iter.next();
+	next() intutions:
+	E next() // next is the only way elements are served.
+	{
+		Pending = cursor;
+		Cursor = cursor.next;
+		Return pending;
+
+@override
+Public boolean hasNext()
+{
+	Return cursor != null; // only true after final element is served because at last Node					   // Object, next == null.
+@override
+Public E next()
+{	
+	if(!hasNext()) throw new NoSuchElementException();
+	Pending = cursor;
+	Cursor = cursor.next;
+	Return pending.data
+}
+	
+@override
+Public  remove()
+{
+	if(pending == null) throw new IllegalStateException();
+	
+	//unlink pending node
+	if(pending.previous != null)
+{	
+		pending.previous.next = pending.next;
+	}
+	//if we are deleting the head, update head reference
+	if(
+
+Private class LinkedIterator implements Iterator<E>
+{
+To make it equivalent to singly-linked list, we need add() size() iterator() next() hasNext() remove() 
+// contains can be built off these methods
